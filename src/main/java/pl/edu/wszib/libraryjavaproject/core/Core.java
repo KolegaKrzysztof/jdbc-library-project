@@ -9,6 +9,7 @@ import pl.edu.wszib.libraryjavaproject.model.Book;
 import pl.edu.wszib.libraryjavaproject.model.User;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.Optional;
 
 public class Core {
@@ -58,14 +59,31 @@ public class Core {
         while (isRunning){
             switch (this.gui.showMenu()){
                 case "1":
-                    System.out.println(1);
+                    String choice = this.gui.findBookByMenu();
+                    String filtr = this.gui.getScanner().nextLine();
+                    switch (choice){
+                        case "1" -> this.bookDAO.getAllBooks().stream().filter(
+                                    s -> s.getTitle().contains(filtr))
+                                    .forEach(System.out::println);
+                        case "2" -> this.bookDAO.getAllBooks().stream().filter(
+                                        s -> s.getAuthor().contains(filtr))
+                                .forEach(System.out::println);
+                        case "3" -> this.bookDAO.getAllBooks().stream().filter(
+                                        s -> Long.toString(s.getIsbn()).contains(filtr))
+                                .forEach(System.out::println);
+                        default -> System.out.println("Wrong choice! ");
+                    }
                     break;
-                case "2": //list all books
+                case "2": //list all books, if logged user is admin than it prints renter data
                     if(this.authenticator.getLoggedUser().isPresent() &&
                             this.authenticator.getLoggedUser().get().getRole() == User.Role.ADMIN) {
-                        this.bookDAO.getAllBooks().stream().forEach(s -> {
+                        this.bookDAO.getAllBooks().stream().sorted(new Comparator<Book>() {
+                            @Override
+                            public int compare(Book o1, Book o2) {
+                                return o1.getTitle().compareTo(o2.getTitle());
+                            }
+                        }).forEach(s -> {
                             if(s.isRent()){
-//                                System.out.println(s.toString());
                                 System.out.println(s.toString().replace("']", (", renter: '[id] = " +
                                         s.getRenter().get().getId() + "' [name] = '" +
                                         s.getRenter().get().getName() + "' [surname] = '" +

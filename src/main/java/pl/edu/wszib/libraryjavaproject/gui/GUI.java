@@ -24,6 +24,15 @@ public class GUI {
         return this.scanner.nextLine();
     }
 
+    public String findBookByMenu(){
+        System.out.println("""
+                How do you want search for book?
+                1. Title
+                2. Author
+                3. ISBN""");
+        return this.scanner.nextLine();
+    }
+
     public String showMenu(){
         System.out.print("""
                 Menu:
