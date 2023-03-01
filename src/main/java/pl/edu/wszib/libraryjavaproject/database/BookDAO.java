@@ -16,7 +16,7 @@ public class BookDAO {
     private BookDAO(){
     }
 
-    public boolean rentBook(int bookId, String login, String name, String surname, LocalDate rentDate){
+    public boolean rentBook(int bookId, String login, LocalDate rentDate){
         try {
             String sql = "SELECT * FROM tbook WHERE id = ?";
             PreparedStatement ps = this.connector.getConnection().prepareStatement(sql);
@@ -25,7 +25,6 @@ public class BookDAO {
             if(rs.next()) {
                 if(!rs.getBoolean("is_rented")) {
                     String updateSql = "UPDATE tbook SET is_rented = ? WHERE id = ?";
-//                    int vehicleId = rs.getInt("id");
                     PreparedStatement updatePs = this.connector.getConnection().prepareStatement(updateSql);
                     updatePs.setBoolean(1, true);
                     updatePs.setInt(2, bookId);
@@ -114,9 +113,32 @@ public class BookDAO {
         } catch (SQLException e){
             throw new RuntimeException(e);
         }
-
-
         return rentedBooks;
+    }
+
+    public List<Book> getRentedBookWithExeceededReturnTime(){
+        List<Book> books = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM tbook JOIN tbookrenter ON tbook.id = tbookrenter.book_id " +
+                    "WHERE tbook.is_rented = ? AND tbookrenter.return_date < ?";
+            PreparedStatement ps = connector.getConnection().prepareStatement(sql);
+            ps.setBoolean(1, true);
+            ps.setDate(2, Date.valueOf(LocalDate.now()));
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                books.add(new Book(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("author"),
+                        rs.getLong("isbn"),
+                        rs.getBoolean("is_rented"),
+                        this.userDAO.findByLogin(this.getRenterLoginByBookId(
+                                rs.getInt("id")).get())));
+            }
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return books;
     }
 
     public Optional<String> getRenterLoginByBookId(int bookId){

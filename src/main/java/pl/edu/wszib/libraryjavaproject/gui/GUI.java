@@ -48,7 +48,8 @@ public class GUI {
                     6. Return book.
                     7. Add book
                     8. List users
-                    9. List rented books""");
+                    9. List rented books
+                    10. List books with exceeded return time""");
         }
         return this.scanner.nextLine();
     }

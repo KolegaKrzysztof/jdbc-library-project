@@ -1,7 +1,5 @@
 package pl.edu.wszib.libraryjavaproject.database;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import pl.edu.wszib.libraryjavaproject.core.Authenticator;
 import pl.edu.wszib.libraryjavaproject.model.User;
 
 import java.sql.*;
