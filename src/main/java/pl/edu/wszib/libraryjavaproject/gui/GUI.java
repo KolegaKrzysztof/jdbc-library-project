@@ -81,17 +81,6 @@ public class GUI {
         return user;
     }
 
-    public LocalDate readDataToRentBook(){
-        int day, month, year;
-        System.out.print("Year: ");
-        year = this.scanner.nextInt();
-        System.out.print("Month: ");
-        month = this.scanner.nextInt();
-        System.out.println("Day: ");
-        day = this.scanner.nextInt();
-        return LocalDate.of(year, month, day);
-    }
-
     public Scanner getScanner() {
         return scanner;
     }

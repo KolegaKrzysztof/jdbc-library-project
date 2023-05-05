@@ -7,6 +7,7 @@ import pl.edu.wszib.libraryjavaproject.gui.GUI;
 import pl.edu.wszib.libraryjavaproject.model.Book;
 import pl.edu.wszib.libraryjavaproject.model.User;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.Optional;
 
@@ -24,19 +25,19 @@ public class Core {
         boolean isRunning = false;
         int counter = 0;
         while (!isRunning && counter < 3){
-            switch (this.gui.showLoggingMenu()){
-                case "1":
+            switch (this.gui.showLoggingMenu()) {
+                case "1" -> {
                     this.authenticator.authenticate(this.gui.readLoginAndPassword());
                     isRunning = this.authenticator.getLoggedUser().isPresent();
                     counter++;
-                    if(!isRunning){
+                    if (!isRunning) {
                         System.out.println("Not authorized!");
                     }
-                    break;
-                case "2":
+                }
+                case "2" -> {
                     User user = this.gui.readLoginAndPassword();
                     this.gui.setUserName(user);
-                    if(this.userDAO.findByLogin(user.getLogin()).isEmpty()){
+                    if (this.userDAO.findByLogin(user.getLogin()).isEmpty()) {
                         this.userDAO.userAdd(user.getLogin(),
                                 DigestUtils.md5Hex(user.getPassword() + this.authenticator.getSeed()),
                                 user.getName(),
@@ -44,12 +45,9 @@ public class Core {
                     } else {
                         System.out.println("Login is taken!");
                     }
-                    break;
-                case "3":
-                    System.exit(0);
-                default:
-                    System.out.println("Wrong choice!");
-                    break;
+                }
+                case "3" -> System.exit(0);
+                default -> System.out.println("Wrong choice!");
             }
         }
         while (isRunning){
@@ -109,8 +107,7 @@ public class Core {
                         if (user.isPresent()) {
                             System.out.print("Book ID: ");
                             if(this.bookDAO.rentBook(this.gui.getScanner().nextInt(),
-                                    user.get().getLogin(),
-                                    this.gui.readDataToRentBook())){
+                                    user.get().getLogin(), LocalDate.now())){
                                 System.out.println("Rent succesful");
                             } else {
                                 System.out.println("Something went wrong!");
